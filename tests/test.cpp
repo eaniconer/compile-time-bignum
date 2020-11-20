@@ -32,6 +32,16 @@ static_assert(std::is_same_v<Num, BigNum<Base<10>, Sign::minus, 1, 0, 0>>);
 
 } // namespace test3
 
+namespace test4 {
+
+constexpr char rawNum[] = "13932";
+using Num = typename BigNumBuilder<rawNum>::type;
+using NegativeNum = typename Negate<Num>::type;
+
+static_assert(std::is_same_v<NegativeNum, BigNum<Base<10>, Sign::minus, 1, 3, 9, 3, 2>>);
+
+} // namespace test4
+
 int main() {
     return 0;
 }

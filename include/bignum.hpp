@@ -20,7 +20,12 @@ enum class Sign {
 };
 
 template <class Base, Sign sign, int... digits>
-class BigNum {};
+struct BigNum {
+    using negate_type = BigNum<
+        Base,
+        sign == Sign::minus ? Sign::plus : Sign::minus,
+        digits...>;
+};
 
 namespace utils {
 
@@ -49,6 +54,8 @@ struct BigNumBuilder<StringView, Base, sign, std::integer_sequence<size_t, Is...
 
 template <const char* s, class Base = Base<10>>
 class BigNumBuilder {
+    static_assert(std::is_same_v<Base, bignum::Base<10>>, "Only Base<10> supported");
+
     static constexpr bool has_minus = (*s == '-');
     static constexpr size_t offset = (has_minus ? 1 : 0);
     using StringView = utils::StringView<s, offset>;
@@ -58,6 +65,11 @@ public:
         Base,
         has_minus ? Sign::minus : Sign::plus,
         std::make_integer_sequence<size_t, utils::strlen(s + offset)>>::type;
+};
+
+template <class BigNum>
+struct Negate {
+    using type = typename BigNum::negate_type;
 };
 
 } // namespace bignum
