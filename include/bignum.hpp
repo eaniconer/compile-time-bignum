@@ -22,23 +22,27 @@ enum class Sign {
 template <class Base, Sign sign, int... digits>
 class BigNum {};
 
-constexpr size_t str_len(const char* s) {
+namespace utils {
+
+constexpr size_t strlen(const char* s) {
     if (*s == 0) return 0;
-    return 1 + str_len(s + 1);
+    return 1 + strlen(s + 1);
 }
 
 template <const char* s, class Base, class T = void>
-struct BigNumBuilderHelper;
+struct BigNumBuilder;
 
 template <const char* s, class Base, size_t... Is>
-struct BigNumBuilderHelper<s, Base, std::integer_sequence<size_t, Is...>> {
-using type = BigNum<Base, Sign::plus, (*(s + Is) - '0')...>;
+struct BigNumBuilder<s, Base, std::integer_sequence<size_t, Is...>> {
+    using type = BigNum<Base, Sign::plus, (*(s + Is) - '0')...>;
 };
+
+} // namespace utils
 
 template <const char* s, class Base = Base<10>>
 class BigNumBuilder {
 public:
-    using type = typename BigNumBuilderHelper<s, Base, std::make_integer_sequence<size_t, str_len(s)>>::type;
+    using type = typename utils::BigNumBuilder<s, Base, std::make_integer_sequence<size_t, utils::strlen(s)>>::type;
 };
 
 } // namespace bignum
