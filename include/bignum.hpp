@@ -51,10 +51,10 @@ template <const char* s, class Base = Base<10>>
 class BigNumBuilder {
     static constexpr bool has_minus = (*s == '-');
     static constexpr size_t offset = (has_minus ? 1 : 0);
-    using string_view = utils::StringView<s, offset>;
+    using StringView = utils::StringView<s, offset>;
 public:
     using type = typename utils::BigNumBuilder<
-        string_view,
+        StringView,
         Base,
         has_minus ? Sign::minus : Sign::plus,
         std::make_integer_sequence<size_t, utils::strlen(s + offset)>>::type;
